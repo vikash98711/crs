@@ -17,27 +17,42 @@ const router = express();
 
 // role api starting here 
 router.post('/Role', async (req, res) => {
-      console.log(req.body);
-      const {RoleName,DisplayStatus} = req.body;
+  console.log(req.body);
+  const { deafaultvar, RoleName, DisplayStatus } = req.body;
 
   try {
+    const pool = await sql.connect(config);
+    const request = pool.request();
 
-      const pool = await sql.connect(config);
-      const request = pool.request();
+    // Convert deafaultvar to integer
+    const deafaultvarAsInt = parseInt(deafaultvar);
 
-      // Call the stored procedure to insert data into the table
-      await request
-          // .input('Deafultvar', sql.Int,Defaultvar)
-          .input('RoleName', sql.VarChar(50), RoleName)
-          .input('DisplayStatus', sql.Bit, DisplayStatus)
-          .execute('InsertRolee');
+    console.log('Executing SQL query...');
+    console.log('Params:', deafaultvarAsInt, RoleName, DisplayStatus);
 
-      res.status(201).json({ message: 'Registration inserted successfully' });
+    // Call the stored procedure to insert data into the table
+    await request
+      .input('deafaultvar', sql.Int, deafaultvarAsInt)
+      .input('RoleName', sql.VarChar(50), RoleName)
+      .input('DisplayStatus', sql.Bit, DisplayStatus)
+      .execute('[upcloud].[InsertRolee]');
+
+    console.log('SQL query executed successfully.');
+
+    res.status(201).json({ message: 'Registration inserted successfully' });
   } catch (error) {
-      console.error('Error inserting registration data:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error inserting registration data:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+
+
+
+
+
 
 // role api starting ending
 
