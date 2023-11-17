@@ -17,15 +17,17 @@ const router = express();
 
 // role api starting here 
 router.post('/Role', async (req, res) => {
+      console.log(req.body);
+      const { Deafultvar,RoleName,DisplayStatus} = req.body;
+
   try {
-      const {RoleName,DisplayStatus} = req.body;
-console.log(RoleName);
+
       const pool = await sql.connect(config);
       const request = pool.request();
 
       // Call the stored procedure to insert data into the table
       await request
-          // .input('var', sql.Int,Defaultvar)
+          .input('Deafultvar', sql.Int,Defaultvar)
           .input('RoleName', sql.VarChar(50), RoleName)
           .input('DisplayStatus', sql.Bit, DisplayStatus)
           .execute('InsertRolee');

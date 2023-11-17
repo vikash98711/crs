@@ -1,4 +1,7 @@
 # render.yaml
 
 buildCommand: |
-  yarn install --ignore-engines
+  apt-get update
+  apt-get install -y nodejs
+  apt-get install -y npm
+  yarn install
