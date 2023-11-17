@@ -1,3 +1,7 @@
-buildCommand: yarn
+# render.yaml
+
+buildCommand: |
+  yarn cache clean
+  yarn
 env:
   NODE_VERSION: 16
