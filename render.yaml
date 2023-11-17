@@ -2,5 +2,5 @@
 
 buildCommand: |
   npm install -g n
-  n 16
+  PATH=$PATH:/opt/render/project/src/.npm-global/bin n 16
   yarn
