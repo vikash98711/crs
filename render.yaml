@@ -2,5 +2,7 @@
 
 buildCommand: |
   npm install -g n
-  PATH=$PATH:/opt/render/project/src/.npm-global/bin n 16
+  export N_PREFIX=$HOME/.n
+  source $N_PREFIX/nvm.sh
+  n 16
   yarn
