@@ -9,7 +9,7 @@ const fs = require('fs');
 const { checkDbConnection } = require('./config');
 
 
-const port = process.env.PORT || 8001;
+const port = process.env.PORT || 8080;
 
 
 

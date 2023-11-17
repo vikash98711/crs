@@ -16,18 +16,19 @@ const router = express();
 
 
 // role api starting here 
-router.post('/insert-registration', async (req, res) => {
+router.post('/Role', async (req, res) => {
   try {
-      const {Role} = req.body;
-
+      const {RoleName,DisplayStatus} = req.body;
+console.log(RoleName);
       const pool = await sql.connect(config);
       const request = pool.request();
 
       // Call the stored procedure to insert data into the table
       await request
-          .input('var', sql.Int,Defaultvar)
-          .input('Roles', sql.VarChar(50), FULLNAME)
-          .execute('DRAW_REGISTRATIONS');
+          // .input('var', sql.Int,Defaultvar)
+          .input('RoleName', sql.VarChar(50), RoleName)
+          .input('DisplayStatus', sql.Bit, DisplayStatus)
+          .execute('InsertRolee');
 
       res.status(201).json({ message: 'Registration inserted successfully' });
   } catch (error) {
