@@ -51,7 +51,7 @@ router.post('/Role', async (req, res) => {
 
 
 
-router.get('/getAllroles', async (req, res) => {
+router.get('/getAllRoles', async (req, res) => {
   try {
     // Connect to the database
     const pool = await sql.connect(config);
@@ -59,7 +59,7 @@ router.get('/getAllroles', async (req, res) => {
     // Create a request object
     const request = pool.request();
 
-    // Execute the stored procedure to get all employee profiles
+    // Execute the stored procedure to get all roles
     const result = await request.execute('SelectAllFromRole');
 
     // Send the retrieved data as JSON
@@ -72,6 +72,7 @@ router.get('/getAllroles', async (req, res) => {
     sql.close();
   }
 });
+
 
 
 

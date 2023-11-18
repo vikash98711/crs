@@ -2,16 +2,28 @@ const sql = require('mssql');
 require('dotenv').config();
 
 
+// const config = {
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   server: process.env.DB_SERVER,
+//   database: process.env.DB_DATABASE,
+//   options: {
+//     encrypt: true, 
+//     trustServerCertificate: true, 
+//   },
+// };
+
+const connectionString = process.env.DATABASE_URL || `mssql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVER}/${process.env.DB_DATABASE}`;
+
 const config = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER,
-  database: process.env.DB_DATABASE,
+  connectionString: connectionString,
   options: {
-    encrypt: true, 
-    trustServerCertificate: true, 
+    encrypt: true,
+    trustServerCertificate: true,
   },
 };
+
+
 
 const checkDbConnection = async () => {
   try {
