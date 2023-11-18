@@ -57,7 +57,7 @@ app.use('/', routes);
 // Start the server
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
-  // checkDbConnection()
+  checkDbConnection()
 });
 
 
