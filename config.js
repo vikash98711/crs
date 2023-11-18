@@ -2,19 +2,20 @@ const sql = require('mssql');
 require('dotenv').config();
 
 const checkDbConnection = async () => {
-  const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
-    database: process.env.DB_DATABASE,
-    options: {
-      encrypt: true,
-      trustServerCertificate: true,
-    },
-  };
-
   try {
+    const config = {
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      server: process.env.DB_SERVER,
+      database: process.env.DB_DATABASE,
+      options: {
+        encrypt: true,
+        trustServerCertificate: true,
+      },
+    };
+
     const pool = await sql.connect(config);
+
     if (pool.connected) {
       console.log('Database connection successful');
       return pool;
@@ -26,4 +27,7 @@ const checkDbConnection = async () => {
   }
 };
 
-module.exports = { checkDbConnection };
+// Call the function
+checkDbConnection();
+
+module.exports = checkDbConnection;
