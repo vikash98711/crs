@@ -52,6 +52,7 @@ router.post('/Role', async (req, res) => {
 
 
 router.get('/getAllRoles', async (req, res) => {
+  console.log("hi fsfs")
   try {
     // Connect to the database
     const pool = await sql.connect(config);
@@ -78,7 +79,7 @@ router.get('/getAllRoles', async (req, res) => {
 
 
 
-// role api starting ending
+// role api ending
 
 
 router.post('/insert-registration', async (req, res) => {
