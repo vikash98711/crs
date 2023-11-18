@@ -51,7 +51,27 @@ router.post('/Role', async (req, res) => {
 
 
 
+router.get('/getAllroles', async (req, res) => {
+  try {
+    // Connect to the database
+    const pool = await sql.connect(config);
+    
+    // Create a request object
+    const request = pool.request();
 
+    // Execute the stored procedure to get all employee profiles
+    const result = await request.execute('SelectAllFromRole');
+
+    // Send the retrieved data as JSON
+    res.status(200).json(result.recordset);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    // Close the database connection
+    sql.close();
+  }
+});
 
 
 
