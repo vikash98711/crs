@@ -17,7 +17,7 @@ const router = express();
 
 // role api starting here 
 router.post('/Role', async (req, res) => {
-  console.log(req.body,"fldnfld");
+  console.log(req.body)
   const { deafaultvar, RoleName, DisplayStatus } = req.body;
 
   try {
@@ -35,8 +35,8 @@ router.post('/Role', async (req, res) => {
   .input('deafaultvar', sql.Int, deafaultvarAsInt)
   .input('RoleName', sql.VarChar(50), RoleName)
   .input('DisplayStatus', sql.Bit, DisplayStatus)
-  // .execute('[upcloud].[InsertRolee]');
-  .execute('InsertRolee');
+  .execute('[upcloud].[InsertRolee]');
+  // .execute('InsertRolee');
 
 
 
