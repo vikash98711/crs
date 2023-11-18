@@ -52,7 +52,7 @@ router.post('/Role', async (req, res) => {
 
 
 router.get('/getAllRoles', async (req, res) => {
-  console.log("hi fsfs")
+
   try {
     // Connect to the database
     const pool = await sql.connect(config);
