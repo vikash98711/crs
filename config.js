@@ -8,10 +8,11 @@ const config = {
   server: process.env.DB_SERVER,
   database: process.env.DB_DATABASE,
   options: {
-    encrypt: true, 
-    trustServerCertificate: true, 
+    encrypt: true,
+    trustServerCertificate: true,
   },
 };
+
 
 // const connectionString = process.env.DATABASE_URL || `mssql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVER}/${process.env.DB_DATABASE}`;
 
@@ -22,6 +23,7 @@ const config = {
 //     trustServerCertificate: true,
 //   },
 // };
+
 
 
 
