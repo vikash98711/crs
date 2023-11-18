@@ -17,7 +17,7 @@ const router = express();
 
 // role api starting here 
 router.post('/Role', async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   const { deafaultvar, RoleName, DisplayStatus } = req.body;
 
   try {
