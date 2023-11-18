@@ -17,7 +17,7 @@ const router = express();
 
 // role api starting here 
 router.post('/Role', async (req, res) => {
-  console.log(req.body);
+  console.log(req.body,"fldnfld");
   const { deafaultvar, RoleName, DisplayStatus } = req.body;
 
   try {
@@ -27,15 +27,18 @@ router.post('/Role', async (req, res) => {
     // Convert deafaultvar to integer
     const deafaultvarAsInt = parseInt(deafaultvar);
 
-    console.log('Executing SQL query...');
-    console.log('Params:', deafaultvarAsInt, RoleName, DisplayStatus);
+    // console.log('Executing SQL query...');
+    // console.log('Params:', deafaultvarAsInt, RoleName, DisplayStatus);
 
     // Call the stored procedure to insert data into the table
     await request
-      .input('deafaultvar', sql.Int, deafaultvarAsInt)
-      .input('RoleName', sql.VarChar(50), RoleName)
-      .input('DisplayStatus', sql.Bit, DisplayStatus)
-      .execute('[upcloud].[InsertRolee]');
+  .input('deafaultvar', sql.Int, deafaultvarAsInt)
+  .input('RoleName', sql.VarChar(50), RoleName)
+  .input('DisplayStatus', sql.Bit, DisplayStatus)
+  // .execute('[upcloud].[InsertRolee]');
+  .execute('InsertRolee');
+
+
 
     console.log('SQL query executed successfully.');
 
