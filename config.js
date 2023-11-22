@@ -13,6 +13,19 @@ const config = {
   },
 };
 
+// const config = {
+//   user: 'upcloud', // Replace with process.env.DB_USER if using environment variable
+//   password: 'Noida@105', // Replace with process.env.DB_PASSWORD if using environment variable
+//   server: 'SG2NWPLS19SQL-v04.mssql.shr.prod.sin2.secureserver.net', // Replace with process.env.DB_SERVER if using environment variable
+//   database: 'cmsIeducationalize', // Replace with process.env.DB_DATABASE if using environment variable
+//   options: {
+//     encrypt: true,
+//     trustServerCertificate: true,
+//   },
+// };
+
+
+
 const checkDbConnection = async () => {
   try {
     const pool = await sql.connect(config);

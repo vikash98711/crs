@@ -35,8 +35,10 @@ router.post('/Role', async (req, res) => {
   .input('deafaultvar', sql.Int, deafaultvarAsInt)
   .input('RoleName', sql.VarChar(50), RoleName)
   .input('DisplayStatus', sql.Bit, DisplayStatus)
-  .execute('[upcloud].[InsertRolee]');
+  // .execute('[upcloud].[InsertRolee]');
   // .execute('InsertRolee');
+  .execute('InsertIntoCRMRole');
+  // .execute('[upcloudglobal].[InsertIntoCRMRole]');
 
 
 
@@ -52,26 +54,21 @@ router.post('/Role', async (req, res) => {
 
 
 router.get('/getAllRoles', async (req, res) => {
-
   try {
-    // Connect to the database
+    // Reuse the existing config object
     const pool = await sql.connect(config);
-    
-    // Create a request object
     const request = pool.request();
 
     // Execute the stored procedure to get all roles
-    const result = await request.execute('SelectAllFromRole');
+    // const result = await request.execute('SelectAllFromRole');
+    const result = await request.execute('SelectIntoCRMRole');
 
     // Send the retrieved data as JSON
     res.status(200).json(result.recordset);
   } catch (error) {
     console.error('Error retrieving data:', error);
     res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    // Close the database connection
-    sql.close();
-  }
+  } 
 });
 
 
@@ -80,6 +77,338 @@ router.get('/getAllRoles', async (req, res) => {
 
 
 // role api ending
+
+
+// department api starting here 
+router.post('/departmentregistered', async (req, res) => {
+  // console.log(req.body)
+  const { deafaultvar, DepartmentName, DisplayStatus } = req.body;
+
+  try {
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    // Convert deafaultvar to integer
+    const deafaultvarAsInt = parseInt(deafaultvar);
+
+    // console.log('Executing SQL query...');
+    // console.log('Params:', deafaultvarAsInt, RoleName, DisplayStatus);
+
+    // Call the stored procedure to insert data into the table
+    await request
+  .input('deafaultvar', sql.Int, deafaultvarAsInt)
+  .input('DepartmentName', sql.VarChar(50), DepartmentName)
+  .input('DisplayStatus', sql.Bit, DisplayStatus)
+  // .execute('[upcloud].[InsertRolee]');
+  // .execute('InsertRolee');
+  .execute('InsertIntoCRMDepartment');
+  // .execute('[upcloudglobal].[InsertIntoCRMRole]');
+
+
+
+    console.log('SQL query executed successfully.');
+
+    res.status(201).json({ message: 'Registration inserted successfully' });
+  } catch (error) {
+    console.error('Error inserting registration data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+router.get('/getAlldepartment', async (req, res) => {
+  try {
+    // Reuse the existing config object
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    // Execute the stored procedure to get all roles
+    // const result = await request.execute('SelectAllFromRole');
+    const result = await request.execute('SelectIntoCRMDepartment');
+
+    // Send the retrieved data as JSON
+    res.status(200).json(result.recordset);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  } 
+});
+
+
+// department api ending 
+
+
+
+// setting api starting here 
+// setting api starting here 
+// general api starting 
+router.post('/SettingGeneral', upload.fields([
+  { name: 'CompanyLogo', maxCount: 1 },
+  { name: 'CompanyLogoDark', maxCount: 1 },
+  { name: 'Favicon', maxCount: 1 },
+]), async (req, res) => {
+  try {
+    const { defaultVar, CompanyName, CompanyDomain, RTLAdmin, RTLCustomerArea, AllowedFileTypes } = req.body;
+
+    // Check if a file was uploaded
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Extract file buffers from req.files
+    const {
+      CompanyLogo,
+      CompanyLogoDark,
+      Favicon,
+    } = req.files;
+
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    request
+      .input('defaultVar', sql.Int, defaultVar)
+      .input('CompanyLogo', sql.VarBinary(sql.MAX), CompanyLogo[0].buffer)
+      .input('CompanyLogoDark', sql.VarBinary(sql.MAX), CompanyLogoDark[0].buffer)
+      .input('Favicon', sql.VarBinary(sql.MAX), Favicon[0].buffer)
+      .input('CompanyName', sql.VarChar(100), CompanyName)
+      .input('CompanyDomain', sql.VarChar(255), CompanyDomain)
+      .input('RTLAdmin', sql.Bit, RTLAdmin)
+      .input('RTLCustomerArea', sql.Bit, RTLCustomerArea)
+      .input('AllowedFileTypes', sql.VarChar(sql.MAX), AllowedFileTypes);
+
+    const result = await request.execute('InsertIntoSetting_General');
+
+    // sql.close(); // Close the database connection
+
+    if (result.returnValue === 0) {
+      res.status(201).json({ message: 'Data inserted or updated successfully' });
+    } else {
+      res.status(500).json({ error: 'Error inserting or updating data' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/SelectIntoSetting_General', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    const result = await request.execute('upcloudglobal.SelectIntoSetting_General');
+
+    // sql.close(); // Close the database connection
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({ error: 'No data found' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+// general api ending
+
+// company information api starting here 
+router.post('/InsertCompanyInfo', upload.none(), async (req, res) => {
+  try {
+  const {Deafaultvar,CompanyName,Address,City,State,Country_Code,Zip_Code,Phone_No,VAT_Num,Company_Format} = req.body;
+
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    request
+      .input('Deafaultvar', sql.Int, Deafaultvar)
+      .input('CompanyName', sql.VarChar(55), CompanyName)
+      .input('Address', sql.VarChar(60), Address)
+      .input('City', sql.VarChar(55), City)
+      .input('State', sql.VarChar(55), State)
+      .input('Country_Code', sql.VarChar(10), Country_Code)
+      .input('Zip_Code', sql.Int, Zip_Code)
+      .input('Phone_No', sql.BigInt, Phone_No)
+      .input('VAT_Num', sql.BigInt, VAT_Num)
+      .input('Company_Format', sql.VarChar(sql.MAX), Company_Format);
+
+    const result = await request.execute('InsertCompanyInfo');
+
+    // sql.close(); // Close the database connection
+
+    if (result.returnValue === 0) {
+      res.status(201).json({ message: 'Data inserted or updated successfully' });
+    } else {
+      res.status(500).json({ error: 'Error inserting or updating data' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/SelectCompanyInfo', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    const result = await request.execute('upcloudglobal.SelectCompanyInfo');
+
+    // sql.close(); // Close the database connection
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({ error: 'No data found' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// company information api ending  here 
+
+
+// localization api starting here
+
+router.post('/InsertLocalization', upload.none(), async (req, res) => {
+  try {
+    const {
+      Deafaultvar,
+      Date_Format,
+      Time_Format,
+      Default_Timezone,
+      Default_Language,
+      Disable_Language,
+      Client_Language
+    } = req.body;
+
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    request
+      .input('Deafaultvar', sql.Int, Deafaultvar)
+      .input('Date_Format', sql.VarChar(50), Date_Format)
+      .input('Time_Format', sql.VarChar(50), Time_Format)
+      .input('Default_Timezone', sql.VarChar(50), Default_Timezone)
+      .input('Default_Language', sql.VarChar(50), Default_Language)
+      .input('Disable_Language', sql.Bit, Disable_Language)
+      .input('Client_Language', sql.Bit, Client_Language);
+
+    const result = await request.execute('InsertLocalization');
+
+    // sql.close(); // Close the database connection
+
+    if (result.returnValue === 0) {
+      res.status(201).json({ message: 'Data inserted or updated successfully' });
+    } else {
+      res.status(500).json({ error: 'Error inserting or updating data' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+router.get('/SelectLocalization', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    const result = await request.execute('upcloudglobal.SelectLocalization');
+
+    // sql.close(); // Close the database connection
+
+    if (result.recordset.length > 0) {
+      res.status(200).json(result.recordset);
+    } else {
+      res.status(404).json({ error: 'No data found' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// localization api ending here 
+
+
+
+// email api starting here
+
+router.post('/InsertEmailSmtpSettings', upload.none(), async (req, res) => {
+  try {
+    const {
+      Deafaultvar,
+      MailEngine,
+      EmailProtocol,
+      EmailEncryption,
+      SmtpHost,
+      SmtpPort,
+      Email,
+      SmtpUsername,
+      SmtpPassword,
+      EmailCharset,
+      BccEmail,
+      EmailSignature,
+      PreHeader,
+      PreFooter,
+      SendTestEmail
+    } = req.body;
+
+    const pool = await sql.connect(config);
+    const request = pool.request();
+
+    request
+      .input('Deafaultvar', sql.Int, Deafaultvar)
+      .input('MailEngine', sql.VarChar(255), MailEngine)
+      .input('EmailProtocol', sql.VarChar(50), EmailProtocol)
+      .input('EmailEncryption', sql.VarChar(50), EmailEncryption)
+      .input('SmtpHost', sql.VarChar(255), SmtpHost)
+      .input('SmtpPort', sql.BigInt, SmtpPort)
+      .input('Email', sql.VarChar(255), Email)
+      .input('SmtpUsername', sql.VarChar(255), SmtpUsername)
+      .input('SmtpPassword', sql.VarChar(255), SmtpPassword)
+      .input('EmailCharset', sql.VarChar(50), EmailCharset)
+      .input('BccEmail', sql.Bit, BccEmail)
+      .input('EmailSignature', sql.VarChar(sql.MAX), EmailSignature)
+      .input('PreHeader', sql.VarChar(sql.MAX), PreHeader)
+      .input('PreFooter', sql.VarChar(sql.MAX), PreFooter)
+      .input('SendTestEmail', sql.Bit, SendTestEmail);
+
+    const result = await request.execute('InsertEmailSmtpSettings');
+
+    sql.close(); // Close the database connection
+
+    if (result.returnValue === 0) {
+      res.status(201).json({ message: 'Data inserted or updated successfully' });
+    } else {
+      res.status(500).json({ error: 'Error inserting or updating data' });
+    }
+  } catch (err) {
+    console.error('Error processing the request:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// email api ending here 
+
+
+
+
+
+// setting api ending here 
+// setting api ending here 
+
+
+
+
 
 
 router.post('/insert-registration', async (req, res) => {
